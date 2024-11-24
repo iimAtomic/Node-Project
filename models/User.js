@@ -8,13 +8,15 @@ const UserSchema = new mongoose.Schema({
 });
 
 
-UserSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function (next) {
     if (!this.isModified('password')) {
-        return next();
+        return next();  
     }
 
+    console.log("Mot de passe avant hachage : ", this.password);  
     const salt = await bcrypt.genSalt(10);
     this.password = await bcrypt.hash(this.password, salt);
+    console.log("Mot de passe après hachage : ", this.password);  
     next();
 });
 
