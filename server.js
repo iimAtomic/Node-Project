@@ -5,6 +5,7 @@ const cors = require('cors');
 
 // Import des routes
 const authRoutes = require('./routes/auth');
+const cvRoutes = require('./routes/cvRoutes');
 
 dotenv.config();
 const app = express();
@@ -15,9 +16,10 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/cv', cvRoutes);
 
 mongoose
-    .connect(process.env.MONGO_URI)
+    .connect(process.env.DATABASE_URL)
     .then(() => {
         app.listen(process.env.PORT || 5000, () => {
             console.log(`Server running on port ${process.env.PORT || 5000}`);
