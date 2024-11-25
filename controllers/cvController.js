@@ -30,15 +30,26 @@ const updateCV = async (req, res) => {
 
 // Supprimer un CV
 const deleteCV = async (req, res) => {
-   const { id } = req.params;
-   const cv = await CV.findById(id);
-   if (!cv || cv.userId.toString() !== req.user.id.toString()) {
-       return res.status(404).json({ message: 'CV non trouvé ou vous n\'êtes pas autorisé.' });
-   }
+    const { id } = req.params;
 
-   await cv.remove();
-   res.status(200).json({ message: 'CV supprimé avec succès.' });
+    try {
+        const cv = await CV.findById(id);
+        if (!cv) {
+            return res.status(404).json({ message: 'CV non trouvé.' });
+        }
+
+        if (cv.userId.toString() !== req.user.id.toString()) {
+            return res.status(403).json({ message: 'Action non autorisée.' });
+        }
+
+        await CV.deleteOne({ _id: id });
+        res.status(200).json({ message: 'CV supprimé avec succès.' });
+    } catch (error) {
+        console.error("Erreur lors de la suppression du CV :", error);
+        res.status(500).json({ message: 'Erreur du serveur.' });
+    }
 };
+
 
 // Obtenir tous les CV visibles
 const getVisibleCV = async (req, res) => {
