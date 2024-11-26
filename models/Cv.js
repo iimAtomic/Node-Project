@@ -3,22 +3,24 @@ const mongoose = require('mongoose');
 const cvSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     personalInfo: {
-        firstName: String,
-        lastName: String,
+        nom: String,
+        prenom: String,
         description: String,
     },
     education: [
         {
-            degree: String,
-            institution: String,
-            year: Number,
+            diplomes: String,
+            certification: String,
+            formations : Number,
+            startDate: Date,
+            endDate: Date,
         }
     ],
     experience: [
         {
-            jobTitle: String,
-            company: String,
-            description: String,
+            postes_occupes: String,
+            missions: String,
+            entreprises: String,
             startDate: Date,
             endDate: Date,
         }

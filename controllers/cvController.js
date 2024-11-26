@@ -2,10 +2,10 @@ const CV = require('../models/CV');
 
 // Créer un CV
 const createCV = async (req, res) => {
-   const { firstName, lastName, description, education, experience } = req.body;
+   const { nom, prenom, description, education, experience } = req.body;
    const cv = new CV({
        userId: req.user.id,
-       personalInfo: { firstName, lastName, description },
+       personalInfo: { nom, prenom, description },
        education,
        experience,
    });
