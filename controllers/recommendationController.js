@@ -1,5 +1,5 @@
 const Recommendation = require('../models/Recommendation');
-const CV = require('../models/CV');
+const CV = require('../models/Cv');
 
 // Ajouter une recommandation
 const addRecommendation = async (req, res) => {
