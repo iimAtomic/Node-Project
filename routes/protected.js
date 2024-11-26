@@ -1,8 +1,11 @@
 const express = require('express');
 const authMiddleware = require("../middleware/authMiddleware");
 const {login, register} = require("../controllers/authController");
+const {userInfo} = require("../controllers/usersController");
 
 const router = express.Router();
+
+
 
 // Appliquer le middleware d'authentification à toutes les routes
 router.use(authMiddleware);

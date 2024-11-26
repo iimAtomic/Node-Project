@@ -28,4 +28,4 @@ const cvSchema = new mongoose.Schema({
     visibility: { type: Boolean, default: true },
 });
 
-module.exports = mongoose.model('CV', cvSchema);
+module.exports = mongoose.models.CV || mongoose.model('CV', cvSchema);

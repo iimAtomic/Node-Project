@@ -7,6 +7,7 @@ const cors = require('cors');
 const authRoutes = require('./routes/auth');
 const cvRoutes = require('./routes/cvRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 
 dotenv.config();
@@ -19,6 +20,8 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/cv', cvRoutes);
+app.use('/api/user' , userRoutes);
+
 
 //Recommandation
 app.use('/api/recommendations', recommendationRoutes);
