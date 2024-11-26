@@ -6,6 +6,8 @@ const cors = require('cors');
 // Import des routes
 const authRoutes = require('./routes/auth');
 const cvRoutes = require('./routes/cvRoutes');
+const recommendationRoutes = require('./routes/recommendationRoutes');
+
 
 dotenv.config();
 const app = express();
@@ -17,6 +19,9 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/cv', cvRoutes);
+
+//Recommandation
+app.use('/api/recommendations', recommendationRoutes);
 
 mongoose
     .connect(process.env.DATABASE_URL)
