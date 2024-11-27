@@ -2,12 +2,14 @@ const express = require('express');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const cors = require('cors');
-
+const swaggerJsDoc = require('swagger-jsdoc');
+const swaggerUI = require('swagger-ui-express');
 // Import des routes
 const authRoutes = require('./routes/auth');
 const cvRoutes = require('./routes/cvRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const userRoutes = require('./routes/userRoutes');
+
 
 
 dotenv.config();
@@ -26,10 +28,37 @@ app.use('/api/user' , userRoutes);
 //Recommandation
 app.use('/api/recommendations', recommendationRoutes);
 
+const options = {
+    definition: {
+        openapi: '3.0.0',
+        info: {
+            title: 'API Documentation',
+            version: '1.0.0',
+            description: 'A simple Express API',
+        },
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+    },
+    apis: ['./routes/*.js'], // Les fichiers contenant vos routes
+};
+
+const specs = swaggerJsDoc(options);
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
+
+
+
 mongoose
     .connect(process.env.DATABASE_URL)
     .then(() => {
-        app.listen(process.env.PORT || 5000, () => {
+        app.listen(process.env.PORT || 3000, () => {
             console.log(`Server running on port ${process.env.PORT || 5000}`);
         });
     })
