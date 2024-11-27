@@ -12,6 +12,62 @@ const router = express.Router();
 
 /**
  * @swagger
+ * components:
+ *   schemas:
+ *     CV:
+ *       type: object
+ *       properties:
+ *         userId:
+ *           type: string
+ *         personalInfo:
+ *           type: object
+ *           properties:
+ *             nom:
+ *               type: string
+ *             prenom:
+ *               type: string
+ *             description:
+ *               type: string
+ *         education:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               diplomes:
+ *                 type: string
+ *               certification:
+ *                 type: string
+ *               formations:
+ *                 type: number
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *         experience:
+ *           type: array
+ *           items:
+ *             type: object
+ *             properties:
+ *               postes_occupes:
+ *                 type: string
+ *               missions:
+ *                 type: string
+ *               entreprises:
+ *                 type: string
+ *               startDate:
+ *                 type: string
+ *                 format: date
+ *               endDate:
+ *                 type: string
+ *                 format: date
+ *         visibility:
+ *           type: boolean
+ */
+
+/**
+ * @swagger
  * /api/cv/create:
  *   post:
  *     summary: Create a new CV
@@ -23,16 +79,7 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               experience:
- *                 type: string
- *               skills:
- *                 type: array
- *                 items:
- *                   type: string
+ *             $ref: '#/components/schemas/CV'
  *     responses:
  *       200:
  *         description: CV created successfully
@@ -61,16 +108,7 @@ router.post('/create', authMiddleware, createCV);
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               name:
- *                 type: string
- *               experience:
- *                 type: string
- *               skills:
- *                 type: array
- *                 items:
- *                   type: string
+ *             $ref: '#/components/schemas/CV'
  *     responses:
  *       200:
  *         description: CV updated successfully
@@ -118,18 +156,7 @@ router.delete('/:id', authMiddleware, deleteCV);
  *             schema:
  *               type: array
  *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: string
- *                   name:
- *                     type: string
- *                   experience:
- *                     type: string
- *                   skills:
- *                     type: array
- *                     items:
- *                       type: string
+ *                 $ref: '#/components/schemas/CV'
  */
 router.get('/', getVisibleCV);
 
