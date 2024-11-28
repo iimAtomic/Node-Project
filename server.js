@@ -16,7 +16,6 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
 app.use(express.json());
 
 // Routes
@@ -26,6 +25,13 @@ app.use('/api/user' , userRoutes);
 
 //Corse entete
 app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173', // Allow requests only from this origin
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
+    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
+    credentials: true, // Enable sending cookies (if needed)
+}));
+
 
 
 //Recommandation
