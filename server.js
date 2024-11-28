@@ -9,6 +9,7 @@ const authRoutes = require('./routes/auth');
 const cvRoutes = require('./routes/cvRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const userRoutes = require('./routes/userRoutes');
+const morgan = require('morgan');
 
 
 
@@ -16,6 +17,34 @@ dotenv.config();
 const app = express();
 
 // Middleware
+
+// Middleware pour logger les requêtes
+app.use(morgan('combined'));
+
+// Middleware pour activer CORS
+app.use(cors({
+    origin: '*', // Autoriser votre frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true, // Si vous utilisez des cookies ou des tokens
+}));
+
+// Répondre aux requêtes OPTIONS
+app.options('*', (req, res) => {
+    console.log('Handling OPTIONS request for', req.url);
+    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.sendStatus(200);
+});
+
+// Middleware pour gérer les erreurs
+app.use((err, req, res, next) => {
+    console.error('Error:', err.message);
+    res.status(err.status || 500).json({ error: err.message });
+});
+
+
 app.use(express.json());
 
 // Routes
