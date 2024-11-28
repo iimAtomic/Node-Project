@@ -25,12 +25,7 @@ app.use('/api/user' , userRoutes);
 
 //Corse entete
 app.use(cors());
-app.use(cors({
-    origin: 'http://localhost:5173', // Allow requests only from this origin
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed methods
-    allowedHeaders: ['Content-Type', 'Authorization'], // Specify allowed headers
-    credentials: true, // Enable sending cookies (if needed)
-}));
+
 
 
 
@@ -45,6 +40,12 @@ const options = {
             version: '1.0.0',
             description: 'A simple Express API',
         },
+        servers: [
+            {
+                url: process.env.SERVER_URL || 'http://localhost:3000/'
+            }
+        ],
+
         components: {
             securitySchemes: {
                 bearerAuth: {
@@ -68,7 +69,7 @@ mongoose
     .connect(process.env.DATABASE_URL)
     .then(() => {
         app.listen(process.env.PORT || 3000, () => {
-            console.log(`Server running on port ${process.env.PORT || 5000}`);
+            console.log(`Server running on port ${process.env.PORT || 3000}`);
         });
     })
     .catch((err) => console.error(err));
