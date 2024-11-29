@@ -12,7 +12,7 @@ const authMiddleware = require('../middleware/authMiddleware'); // Middleware d'
 
 /**
  * @swagger
- * /api/users/info:
+ * /api/user/info:
  *   get:
  *     summary: Récupérer les informations de l'utilisateur connecté
  *     tags: [Users]
@@ -41,7 +41,7 @@ router.get('/info', authMiddleware, getUserInfo);
 
 /**
  * @swagger
- * /api/users/update:
+ * /api/user/update:
  *   put:
  *     summary: Mettre à jour les informations de l'utilisateur connecté
  *     tags: [Users]
