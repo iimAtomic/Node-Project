@@ -4,82 +4,51 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const swaggerJsDoc = require('swagger-jsdoc');
 const swaggerUI = require('swagger-ui-express');
-// Import des routes
+const morgan = require('morgan');
+
+// Import Routes
 const authRoutes = require('./routes/auth');
 const cvRoutes = require('./routes/cvRoutes');
 const recommendationRoutes = require('./routes/recommendationRoutes');
 const userRoutes = require('./routes/userRoutes');
-const morgan = require('morgan');
-
-
 
 dotenv.config();
+
 const app = express();
 
 // Middleware
+app.use(morgan('combined')); // Log requests
 
-// Middleware pour logger les requêtes
-app.use(morgan('combined'));
-
-// Middleware pour activer CORS
+// Enable CORS for all origins and specific headers
 app.use(cors({
-    origin: '*', // Autoriser votre frontend
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
-    credentials: true, // Si vous utilisez des cookies ou des tokens
 }));
 
-// Répondre aux requêtes OPTIONS
-app.options('*', (req, res) => {
-    console.log('Handling OPTIONS request for', req.url);
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5173');
-    res.header('Access-Control-Allow-Origin', 'http://localhost:5175');
-    res.header('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5175');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    res.sendStatus(200);
-});
-
-// Middleware pour gérer les erreurs
-app.use((err, req, res, next) => {
-    console.error('Error:', err.message);
-    res.status(err.status || 500).json({ error: err.message });
-});
-
-
+// Parse JSON requests
 app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/cv', cvRoutes);
-app.use('/api/user' , userRoutes);
-
-
-//Corse entete
-app.use(cors());
-
-
-
-
-//Recommandation
 app.use('/api/recommendations', recommendationRoutes);
+app.use('/api/user', userRoutes);
 
-const options = {
+// Swagger Configuration
+const swaggerOptions = {
     definition: {
         openapi: '3.0.0',
         info: {
             title: 'API Documentation',
             version: '1.0.0',
-            description: 'A simple Express API',
+            description: 'API Documentation for the CV Manager System',
         },
         servers: [
             {
-                url: process.env.SERVER_URL || 'http://localhost:3000/'
-            }
+                url: process.env.SERVER_URL || 'http://localhost:3000',
+            },
         ],
-
         components: {
             securitySchemes: {
                 bearerAuth: {
@@ -90,15 +59,13 @@ const options = {
             },
         },
     },
-    apis: ['./routes/*.js'], // Les fichiers contenant vos routes
+    apis: ['./routes/*.js'], // Specify route files for Swagger
 };
 
-const specs = swaggerJsDoc(options);
+const swaggerSpecs = swaggerJsDoc(swaggerOptions);
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpecs));
 
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs));
-
-
-
+// Database Connection and Server Start
 mongoose
     .connect(process.env.DATABASE_URL)
     .then(() => {
@@ -106,5 +73,4 @@ mongoose
             console.log(`Server running on port ${process.env.PORT || 3000}`);
         });
     })
-    .catch((err) => console.error(err));
-
+    .catch((err) => console.error('Database connection error:', err));
