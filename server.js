@@ -56,6 +56,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/cv', cvRoutes);
 app.use('/api/user' , userRoutes);
 
+
 //Corse entete
 app.use(cors());
 
