@@ -1,13 +1,14 @@
 const express = require('express');
-const { createCV, updateCV, deleteCV, getVisibleCV } = require('../controllers/cvController');
-const authMiddleware = require('../middleware/authMiddleware');
+const { createCV, updateCV, deleteCV, getVisibleCV, getUserCVs } = require('../controllers/cvController');
+const authMiddleware = require('../middleware/authMiddleware'); // Middleware d'authentification
 const router = express.Router();
+const CV = require('../models/Cv');
 
 /**
  * @swagger
  * tags:
  *   name: CV Manager
- *   description: API for CV Managing
+ *   description: API for managing CVs
  */
 
 /**
@@ -16,6 +17,9 @@ const router = express.Router();
  *   schemas:
  *     CV:
  *       type: object
+ *       required:
+ *         - userId
+ *         - personalInfo
  *       properties:
  *         userId:
  *           type: string
@@ -81,10 +85,12 @@ const router = express.Router();
  *           schema:
  *             $ref: '#/components/schemas/CV'
  *     responses:
- *       200:
+ *       201:
  *         description: CV created successfully
  *       400:
  *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
  */
 router.post('/create', authMiddleware, createCV);
 
@@ -114,6 +120,8 @@ router.post('/create', authMiddleware, createCV);
  *         description: CV updated successfully
  *       400:
  *         description: Invalid input
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: CV not found
  */
@@ -137,6 +145,8 @@ router.put('/:id', authMiddleware, updateCV);
  *     responses:
  *       200:
  *         description: CV deleted successfully
+ *       401:
+ *         description: Unauthorized
  *       404:
  *         description: CV not found
  */
@@ -159,5 +169,65 @@ router.delete('/:id', authMiddleware, deleteCV);
  *                 $ref: '#/components/schemas/CV'
  */
 router.get('/', getVisibleCV);
+
+/**
+ * @swagger
+ * /api/cv/user:
+ *   get:
+ *     summary: Get CVs of the logged-in user
+ *     tags: [CV Manager]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: List of CVs for the logged-in user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/CV'
+ *       401:
+ *         description: Unauthorized
+ */
+router.get('/user', authMiddleware, getUserCVs);
+
+/**
+ * @swagger
+ * /api/cv/{id}:
+ *   get:
+ *     summary: Get a CV by ID
+ *     tags: [CV Manager]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The CV ID
+ *     responses:
+ *       200:
+ *         description: The CV details
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/CV'
+ *       404:
+ *         description: CV not found
+ */
+router.get('/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const cv = await CV.findById(id); // Assurez-vous que CvModel est importé
+        if (!cv) {
+            return res.status(404).json({ message: "CV introuvable" });
+        }
+        res.status(200).json(cv);
+    } catch (error) {
+        console.error("Erreur lors de la récupération du CV :", error);
+        res.status(500).json({ message: "Erreur serveur" });
+    }
+});
+
 
 module.exports = router;
